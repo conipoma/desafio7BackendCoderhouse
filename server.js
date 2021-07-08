@@ -6,6 +6,8 @@ class Archivo {
     constructor(file) {
         this.file = (file);
         this.encoding = 'utf-8';
+        this.visita = 0;
+        this.visitaRandom = 0
     }
 
     async read() {
@@ -19,7 +21,7 @@ class Archivo {
             
         const productObj = {
             items: [...productsArray],
-            cantidad: productsArray.lenght 
+            cantidad: productsArray.length 
         };
 
         return productObj;
@@ -33,19 +35,14 @@ class Archivo {
 /* Instanciamos la clase Archivo a partir del productos.txt */
 const archivoProduct = new Archivo('productos.txt');
 
-
 const app = express();
-
-/*Contadores*/
-let visitaItem = 0;
-let visitaRandom = 0;
 
 /*Rutas*/
 app.get('/items', (req, res) => {
     archivoProduct
         .read()
         .then((data) => {
-            visitaItem++;
+            archivoProduct.visita++;
             res.send(data);
         })
         .catch((e) => console.log(e));
@@ -57,7 +54,7 @@ app.get('/item-random', (req, res) => {
         .then((data) => {
             const numRandom = Math.floor(Math.random() * data.cantidad);
             const productRandom = { item: data.items[numRandom] };
-            visitaRandom++;
+            archivoProduct.visitaRandom++;
             res.send(productRandom);
         })
         .catch((e) => console.log(e));
@@ -66,8 +63,8 @@ app.get('/item-random', (req, res) => {
 app.get('/visitas', (req, res) => {
     res.send({
         visitas: {
-            items: visitaItem,
-            item: visitaRandom,
+            items: archivoProduct.visita,
+            item: archivoProduct.visitaRandom,
         },
     });
 });
